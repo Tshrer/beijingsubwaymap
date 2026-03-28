@@ -4,39 +4,29 @@ on:
   push:
     branches: [ main ]
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-
-      - name: Upload artifacts
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
+      - name: Build and Deploy
+        run: |
+          # Create temporary directory
+          mkdir -p build
+          # Copy all files
+          cp -r . build/
+          # Remove git directory
+          rm -rf build/.git
+          rm -rf build/.github
+          rm build/.gitignore
+        shell: bash
 
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          force_orphan: true
