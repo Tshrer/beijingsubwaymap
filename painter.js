@@ -10,7 +10,7 @@ if (!func.isPC()) {
     alert("移动端部分功能无法体验，请在PC端查看")
 }
 $.ajax({
-    url: "/subwaymap/beijing.xml",
+    url: "subwaymap/beijing.xml",
     dataType: 'xml',
     type: 'GET',
     async: false,
@@ -108,7 +108,7 @@ $.ajax({
                         y: thisP.attr("y") - 7 + (thisP.attr("dy") ? thisP.attr("dy") * 1 : ""),
                         sdata: thisP.attr("lb")
                     });
-                    image[0].href.baseVal = `/subwaymap/turn.png`;
+                    image[0].href.baseVal = `subwaymap/turn.png`;
                 } else {
                     var circle = $.svg('circle').appendTo('#g-box')
                     circle.attr({
@@ -358,7 +358,7 @@ function linePinter(firstPlan) {
             x: startPoint[0].nodeName == "circle" ? startPoint.attr("cx") - 10 : (startPoint.attr("x") - 3),
             y: startPoint[0].nodeName == "circle" ? startPoint.attr("cy") - 28 : (startPoint.attr("y") - 21),
         }).addSvgClass("mark");
-        startImg[0].href.baseVal = `/subwaymap/start.png`;
+        startImg[0].href.baseVal = `subwaymap/start.png`;
         var endImg = $.svg('image').appendTo('#g-box');
         var endPoint = $("[sdata='" + BJ.endName + "']")
         endImg.attr({
@@ -367,7 +367,7 @@ function linePinter(firstPlan) {
             x: endPoint[0].nodeName == "circle" ? endPoint.attr("cx") - 10 : (endPoint.attr("x") - 3),
             y: endPoint[0].nodeName == "circle" ? endPoint.attr("cy") - 28 : (endPoint.attr("y") - 21),
         }).addSvgClass("mark");
-        endImg[0].href.baseVal = `/subwaymap/end.png`;
+        endImg[0].href.baseVal = `subwaymap/end.png`;
     }
     $(thisLineStr).appendTo(".line-info div")
 }
