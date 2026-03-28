@@ -15,9 +15,34 @@
     </svg>
   </div>
   <script src="libs/jquery.js"></script>
-  <script>window.jQuery || document.write('<script src="https://code.jquery.com/jquery-1.12.4.min.js"><\\/script>')</script>
+  <script>
+    // 如果本地 jQuery 加载失败，使用 CDN 版本
+    if (typeof jQuery === 'undefined' && typeof $ === 'undefined') {
+      var script = document.createElement('script');
+      script.src = 'https://code.jquery.com/jquery-1.12.4.min.js';
+      script.onload = function() {
+        console.log('jQuery loaded from CDN');
+      };
+      script.onerror = function() {
+        console.error('Failed to load jQuery from both local and CDN');
+      };
+      document.head.appendChild(script);
+    }
+  </script>
   <script src="libs/limitTextNum.js"></script>
-  <script src="libs/hammer.min.js"></script>
+  <!-- Hammer.js - 使用 CDN 以确保版本兼容性 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+  <!-- 本地 Hammer 作为后备 -->
+  <script>
+    if (typeof Hammer === 'undefined') {
+      var hammerScript = document.createElement('script');
+      hammerScript.src = 'libs/hammer.min.js';
+      hammerScript.onerror = function() {
+        console.error('Failed to load Hammer.js');
+      };
+      document.head.appendChild(hammerScript);
+    }
+  </script>
   <script src="libs/svg-pan-zoom.js"></script>
   <script src="painter.js"></script>
 </body>
