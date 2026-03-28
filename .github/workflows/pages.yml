@@ -12,21 +12,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build and Deploy
-        run: |
-          # Create temporary directory
-          mkdir -p build
-          # Copy all files
-          cp -r . build/
-          # Remove git directory
-          rm -rf build/.git
-          rm -rf build/.github
-          rm build/.gitignore
-        shell: bash
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
-          force_orphan: true
+          cname: false
