@@ -241,7 +241,7 @@ function getThisLineInfo() {
     $(".line-info article").remove();
     $.ajax({
         type: "get",
-        url: `/apis/api/searchstartend?start=${BJ.startName}&end=${BJ.endName}`,
+        url: `apis/api/searchstartend?start=${BJ.startName}&end=${BJ.endName}`,
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         success(data) {
@@ -335,7 +335,7 @@ function linePinter(firstPlan) {
                     x: thisP.attr("x") - 7,
                     y: thisP.attr("y") - 7 + (thisP.attr("dy") ? thisP.attr("dy") * 1 : ""),
                 }).addSvgClass("mark");
-                    image[0].href.baseVal = `/subwaymap/turn.png`;
+                    image[0].href.baseVal = `subwaymap/turn.png`;
             } else {
                 var circle = $.svg('circle').appendTo('#g-box')
                 circle.attr({
