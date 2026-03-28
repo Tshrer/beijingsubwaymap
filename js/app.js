@@ -28,7 +28,7 @@ $(function(){
     }
   }
 
-  loadXml('./subwaymap/beijing.xml', function(data){
+  loadXml('./beijingsubwaymap/beijing.xml', function(data){
     var $xml = $(data);
     // draw lines
     $xml.find('l').each(function(){
