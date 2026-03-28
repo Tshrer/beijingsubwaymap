@@ -25,12 +25,16 @@ function initPainter() {
         return;
     }
     
+    console.log('jQuery loaded, initializing painter');
+    
     if (!func.isPC()) {
+        console.warn('Non-PC environment detected');
         alert("移动端部分功能无法体验，请在PC端查看")
     }
     
     // 构建正确的 XML 文件路径
     var xmlPath = 'subwaymap/beijing.xml';
+    console.log('Loading XML from:', xmlPath);
     
     $.ajax({
         url: xmlPath,
@@ -38,8 +42,9 @@ function initPainter() {
         type: 'GET',
         async: false,
         timeout: 5000,
-    success: function(data) {
-        BJ.data = data;
+        success: function(data) {
+            console.log('XML data loaded successfully');
+            BJ.data = data;
             var ls = $(data).find("sw").children()
         for (var i = 0; i < ls.length; i++) {
                 var ps = $(ls[i]).children()
@@ -184,18 +189,36 @@ function initPainter() {
             console.warn('设置 viewBox 失败', e);
         }
 
-        window.panzoom = svgPanZoom('#mobile-svg', {
-            zoomEnabled: true,
-            panEnabled: true,
-            controlIconsEnabled: false,
-            fit: false,
-            center: false,
-            contain: false,
-            minZoom: 0.3,
-            maxZoom: 5,
-            customEventsHandler: eventsHandler
-        });
-        panzoom.pan({ x: -950 + window.innerWidth / 2, y: -700 + window.innerHeight / 2 });
+        // 确保 Hammer 和 svgPanZoom 都已加载
+        if (typeof svgPanZoom === 'undefined') {
+            console.error('svgPanZoom is not loaded!');
+            return;
+        }
+        
+        if (typeof Hammer === 'undefined') {
+            console.warn('Hammer.js is not loaded, touch gestures will not work');
+        }
+
+        try {
+            console.log('Initializing svgPanZoom...');
+            window.panzoom = svgPanZoom('#mobile-svg', {
+                zoomEnabled: true,
+                panEnabled: true,
+                controlIconsEnabled: false,
+                fit: false,
+                center: false,
+                contain: false,
+                minZoom: 0.3,
+                maxZoom: 5,
+                customEventsHandler: eventsHandler
+            });
+            
+            panzoom.pan({ x: -950 + window.innerWidth / 2, y: -700 + window.innerHeight / 2 });
+            console.log('svgPanZoom initialized successfully');
+        } catch(e) {
+            console.error('Error initializing svgPanZoom:', e);
+            console.error('Stack:', e.stack);
+        }
 
         // build simple control panel for toggling/highlighting lines
         try{
@@ -243,22 +266,32 @@ function initPainter() {
                 $('#line-controls input[type=checkbox]').prop('checked', true);
             });
         }catch(e){console.warn(e)}
-    }
+    },
     error: function(jqXHR, textStatus, errorThrown) {
-        console.error('Failed to load beijing.xml:', textStatus, errorThrown);
+        console.error('Failed to load beijing.xml!');
+        console.error('Error status:', jqXHR.status);
+        console.error('Error type:', textStatus);
+        console.error('Error details:', errorThrown);
+        if (jqXHR.responseText) {
+            console.error('Response text:', jqXHR.responseText);
+        }
         alert('无法加载地图数据: ' + textStatus);
     }
     });
 }
 
 // 在 jQuery 完全加载后初始化
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(initPainter, 100);
-    });
-} else {
-    setTimeout(initPainter, 100);
-}
+setTimeout(function() {
+    console.log('Checking jQuery availability...');
+    if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
+        console.error('jQuery is still not available!');
+        // 再等一次
+        setTimeout(initPainter, 500);
+    } else {
+        console.log('jQuery is available, calling initPainter');
+        initPainter();
+    }
+}, 200);
 
 // 其余的事件处理代码
 /* Station interactivity removed: click/hover handlers and stations AJAX omitted */
@@ -503,50 +536,95 @@ function loopPinter(ssN, thisLine, lColor) {
 var eventsHandler = {
     haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel'],
     init: function(options) {
-        var instance = options.instance,
-            initialScale = 1,
-            pannedX = 0,
-            pannedY = 0
-        this.hammer = Hammer(options.svgElement, {
-            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
-        })
-        this.hammer.get('pinch').set({
-            enable: true
-        })
-        ``
-        this.hammer.on('doubletap', function(ev) {
-            instance.zoomIn()
-        })
-        this.hammer.on('panstart panmove', function(ev) {
-            if (ev.type === 'panstart') {
-                pannedX = 0
-                pannedY = 0
+        console.log('Initializing eventsHandler...');
+        
+        if (typeof Hammer === 'undefined') {
+            console.error('Hammer.js is not available!');
+            return;
+        }
+        
+        var instance = options.instance;
+        var initialScale = 1;
+        var pannedX = 0;
+        var pannedY = 0;
+        var self = this;
+        
+        try {
+            // 创建 Hammer 实例（支持 Hammer 2.x）
+            this.hammer = new Hammer(options.svgElement);
+            console.log('Hammer instance created');
+            
+            // 尝试配置手势识别器
+            try {
+                // 方式1: 直接获取并配置（Hammer 2.x）
+                var pinch = this.hammer.get('pinch');
+                if (pinch && typeof pinch.set === 'function') {
+                    pinch.set({ enable: true });
+                    console.log('Pinch recognizer configured');
+                }
+                
+                var pan = this.hammer.get('pan');
+                if (pan && typeof pan.set === 'function') {
+                    pan.set({ enable: true, direction: Hammer.DIRECTION_ALL });
+                    console.log('Pan recognizer configured');
+                }
+            } catch(e) {
+                console.warn('Could not configure recognizers via get/set:', e.message);
+                // 继续执行，方式2 的事件拦截仍可用
             }
-            instance.panBy({
-                x: ev.deltaX - pannedX,
-                y: ev.deltaY - pannedY
-            })
-            pannedX = ev.deltaX
-            pannedY = ev.deltaY
-        })
-        this.hammer.on('pinchstart pinchmove', function(ev) {
-            if (ev.type === 'pinchstart') {
-                initialScale = instance.getZoom()
+        } catch(e) {
+            console.error('Error creating Hammer instance:', e);
+            return;
+        }
+        
+        // 绑定事件处理
+        try {
+            this.hammer.on('doubletap', function(ev) {
+                console.log('Double tap detected');
+                instance.zoomIn();
+            });
+            
+            this.hammer.on('panstart panmove', function(ev) {
+                if (ev.type === 'panstart') {
+                    pannedX = 0;
+                    pannedY = 0;
+                }
+                instance.panBy({
+                    x: ev.deltaX - pannedX,
+                    y: ev.deltaY - pannedY
+                });
+                pannedX = ev.deltaX;
+                pannedY = ev.deltaY;
+            });
+            
+            this.hammer.on('pinchstart pinchmove', function(ev) {
+                if (ev.type === 'pinchstart') {
+                    initialScale = instance.getZoom();
+                }
                 instance.zoomAtPoint(initialScale * ev.scale, {
                     x: ev.center.x,
                     y: ev.center.y
-                })
-            }
-            instance.zoomAtPoint(initialScale * ev.scale, {
-                x: ev.center.x,
-                y: ev.center.y
-            })
-        })
+                });
+            });
+            
+            console.log('Event handlers attached successfully');
+        } catch(e) {
+            console.error('Error attaching event handlers:', e);
+        }
+        
+        // 阻止默认触摸行为
         options.svgElement.addEventListener('touchmove', function(e) {
             e.preventDefault();
         });
     },
     destroy: function() {
-        this.hammer.destroy()
+        if (this.hammer && typeof this.hammer.destroy === 'function') {
+            try {
+                this.hammer.destroy();
+                console.log('Hammer instance destroyed');
+            } catch(e) {
+                console.warn('Error destroying Hammer instance:', e);
+            }
+        }
     }
 }
