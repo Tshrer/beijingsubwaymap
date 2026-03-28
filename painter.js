@@ -19,20 +19,22 @@ if (typeof func === 'undefined') {
 
 // 等待 jQuery 加载完成
 function initPainter() {
+    console.log('initPainter called, checking jQuery...');
+    
     if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
         console.error('jQuery not loaded, retrying...');
         setTimeout(initPainter, 100);
         return;
     }
     
-    console.log('jQuery loaded, initializing painter');
+    console.log('✓ jQuery loaded, initializing painter');
     
     if (!func.isPC()) {
         console.warn('Non-PC environment detected');
         alert("移动端部分功能无法体验，请在PC端查看")
     }
     
-    // 构建正确的 XML 文件路径
+    // 构建 XML 文件路径 - 支持相对路径和 GitHub Pages
     var xmlPath = 'subwaymap/beijing.xml';
     console.log('Loading XML from:', xmlPath);
     
@@ -43,7 +45,7 @@ function initPainter() {
         async: false,
         timeout: 5000,
         success: function(data) {
-            console.log('XML data loaded successfully');
+            console.log('✓ XML data loaded successfully');
             BJ.data = data;
             var ls = $(data).find("sw").children()
         for (var i = 0; i < ls.length; i++) {
@@ -268,30 +270,53 @@ function initPainter() {
         }catch(e){console.warn(e)}
     },
     error: function(jqXHR, textStatus, errorThrown) {
-        console.error('Failed to load beijing.xml!');
-        console.error('Error status:', jqXHR.status);
+        console.error('✗ Failed to load beijing.xml!');
+        console.error('Status code:', jqXHR.status);
         console.error('Error type:', textStatus);
-        console.error('Error details:', errorThrown);
-        if (jqXHR.responseText) {
-            console.error('Response text:', jqXHR.responseText);
+        console.error('Error thrown:', errorThrown);
+        console.error('URL attempted:', 'subwaymap/beijing.xml');
+        console.error('Current location:', window.location.href);
+        
+        if (jqXHR.status === 404) {
+            console.error('The file was not found on the server');
+            alert('错误：无法找到地图数据文件\n\n请确保：\n1. subwaymap/beijing.xml 文件存在\n2. 文件已上传到 GitHub');
+        } else if (jqXHR.status === 0) {
+            console.error('Network error - check CORS settings');
+            alert('网络错误：无法访问地图数据\n请检查网络连接和跨域设置');
+        } else {
+            console.error('Response:', jqXHR.responseText);
+            alert('无法加载地图数据: ' + textStatus + ' (HTTP ' + jqXHR.status + ')');
         }
-        alert('无法加载地图数据: ' + textStatus);
+        
+        // 设置 linesMeta 长度为 0（供调试用）
+        console.warn('linesMeta length after error: ' + linesMeta.length);
     }
     });
 }
 
 // 在 jQuery 完全加载后初始化
-setTimeout(function() {
-    console.log('Checking jQuery availability...');
-    if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
-        console.error('jQuery is still not available!');
-        // 再等一次
-        setTimeout(initPainter, 500);
-    } else {
-        console.log('jQuery is available, calling initPainter');
-        initPainter();
+console.log('painter.js: Waiting for jQuery to load...');
+var jQueryWaitAttempts = 0;
+var maxAttempts = 50; // 最多等待 5 秒（50 * 100ms）
+
+var jQueryCheckInterval = setInterval(function() {
+    jQueryWaitAttempts++;
+    
+    if (typeof jQuery !== 'undefined' && typeof $ !== 'undefined') {
+        console.log('painter.js: ✓ jQuery detected after ' + (jQueryWaitAttempts * 100) + 'ms');
+        clearInterval(jQueryCheckInterval);
+        // 再等一时刻确保 jQuery 完全初始化
+        setTimeout(initPainter, 100);
+    } else if (jQueryWaitAttempts >= maxAttempts) {
+        console.error('painter.js: ✗ jQuery not loaded after 5 seconds!');
+        console.error('此问题通常表示：');
+        console.error('1. jQuery 文件加载失败（本地或 CDN）');
+        console.error('2. 网络连接问题');
+        console.error('3. 浏览器安全策略阻止');
+        clearInterval(jQueryCheckInterval);
+        alert('错误：jQuery 无法加载\n\n请尝试：\n1. 刷新页面\n2. 检查网络连接\n3. 如果问题持续，请报告此错误');
     }
-}, 200);
+}, 100);
 
 // 其余的事件处理代码
 /* Station interactivity removed: click/hover handlers and stations AJAX omitted */

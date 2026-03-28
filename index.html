@@ -14,19 +14,21 @@
       <g id="g-box" class="svg-pan-zoom_viewport"></g>
     </svg>
   </div>
-  <script src="libs/jquery.js"></script>
+  <!-- 优先使用 CDN jQuery，本地文件作为后备 -->
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
   <script>
-    // 如果本地 jQuery 加载失败，使用 CDN 版本
+    // 如果 CDN 加载失败，尝试本地版本
     if (typeof jQuery === 'undefined' && typeof $ === 'undefined') {
+      console.warn('CDN jQuery failed, trying local copy');
       var script = document.createElement('script');
-      script.src = 'https://code.jquery.com/jquery-1.12.4.min.js';
-      script.onload = function() {
-        console.log('jQuery loaded from CDN');
-      };
+      script.src = 'libs/jquery.js';
       script.onerror = function() {
-        console.error('Failed to load jQuery from both local and CDN');
+        console.error('Failed to load jQuery from both CDN and local. The page will not work correctly.');
+        alert('警告：jQuery 加载失败，网页功能受限。请检查网络连接。');
       };
       document.head.appendChild(script);
+    } else {
+      console.log('jQuery loaded from CDN');
     }
   </script>
   <script src="libs/limitTextNum.js"></script>
@@ -35,12 +37,15 @@
   <!-- 本地 Hammer 作为后备 -->
   <script>
     if (typeof Hammer === 'undefined') {
+      console.warn('CDN Hammer.js failed, trying local copy');
       var hammerScript = document.createElement('script');
       hammerScript.src = 'libs/hammer.min.js';
       hammerScript.onerror = function() {
         console.error('Failed to load Hammer.js');
       };
       document.head.appendChild(hammerScript);
+    } else {
+      console.log('Hammer.js loaded from CDN');
     }
   </script>
   <script src="libs/svg-pan-zoom.js"></script>
