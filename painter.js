@@ -35,7 +35,7 @@ function initPainter() {
     }
     
     // 构建 XML 文件路径 - 支持相对路径和 GitHub Pages
-    var xmlPath = './subwaymap/beijing.xml';
+    var xmlPath = './beijingsubwaymap/subwaymap/beijing.xml';
     console.log('Loading XML from:', xmlPath);
     
     $.ajax({
