@@ -28,7 +28,7 @@ $(function(){
     }
   }
 
-  loadXml('subwaymap/beijing.xml', function(data){
+  loadXml('./subwaymap/beijing.xml', function(data){
     var $xml = $(data);
     // draw lines
     $xml.find('l').each(function(){
@@ -92,6 +92,6 @@ $(function(){
       });
     }catch(e){console.warn(e)}
   }, function(err){
-    alert('无法加载 subwaymap/beijing.xml：' + (err && err.message || err));
+    alert('无法加载 ./subwaymap/beijing.xml：' + (err && err.message || err));
   });
 });
