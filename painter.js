@@ -6,15 +6,38 @@ var BJ = {
 }
 var linesMeta = [];
 console.log('painter.js loaded');
-if (!func.isPC()) {
-    alert("移动端部分功能无法体验，请在PC端查看")
+
+// 定义 func 对象（如果还未定义）
+if (typeof func === 'undefined') {
+    var func = {
+        isPC: function() {
+            var userAgent = navigator.userAgent.toLowerCase();
+            return !(userAgent.match(/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i));
+        }
+    };
 }
-$.ajax({
-    url: "subwaymap/beijing.xml",
-    dataType: 'xml',
-    type: 'GET',
-    async: false,
-    timeout: 5000,
+
+// 等待 jQuery 加载完成
+function initPainter() {
+    if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
+        console.error('jQuery not loaded, retrying...');
+        setTimeout(initPainter, 100);
+        return;
+    }
+    
+    if (!func.isPC()) {
+        alert("移动端部分功能无法体验，请在PC端查看")
+    }
+    
+    // 构建正确的 XML 文件路径
+    var xmlPath = 'subwaymap/beijing.xml';
+    
+    $.ajax({
+        url: xmlPath,
+        dataType: 'xml',
+        type: 'GET',
+        async: false,
+        timeout: 5000,
     success: function(data) {
         BJ.data = data;
             var ls = $(data).find("sw").children()
@@ -173,55 +196,71 @@ $.ajax({
             customEventsHandler: eventsHandler
         });
         panzoom.pan({ x: -950 + window.innerWidth / 2, y: -700 + window.innerHeight / 2 });
-    }
-});
 
-    // build simple control panel for toggling/highlighting lines
-    try{
-        console.log('linesMeta length', linesMeta.length);
-        var ctrl = $('<div id="line-controls" style="position:fixed;right:10px;top:10px;background:#fff;border:1px solid #ccc;padding:8px;max-height:80vh;overflow:auto;z-index:9999"></div>');
-        ctrl.append('<strong>线路</strong><br/>');
-        linesMeta.forEach(function(m){
-            var id = 'chk-' + m.code;
-            var row = $(`<label style="display:block;margin:4px 0"><input type="checkbox" checked data-code="${m.code}" id="${id}" /> ${m.label}</label>`);
-            ctrl.append(row);
-        });
-        var btns = $('<div style="margin-top:6px"><button id="btn-highlight" style="margin-right:6px">高亮</button><button id="btn-reset">重置</button></div>');
-        ctrl.append(btns);
-        $('body').append(ctrl);
-
-        // toggle visibility
-        $('#line-controls input[type=checkbox]').on('change', function(){
-            var code = $(this).data('code');
-            var on = $(this).is(':checked');
-            $('.line-' + code).each(function(){
-                var $el = $(this);
-                if(on){
-                    $el.removeClass('dim');
-                }else{
-                    $el.addClass('dim');
-                }
+        // build simple control panel for toggling/highlighting lines
+        try{
+            console.log('linesMeta length', linesMeta.length);
+            var ctrl = $('<div id="line-controls" style="position:fixed;right:10px;top:10px;background:#fff;border:1px solid #ccc;padding:8px;max-height:80vh;overflow:auto;z-index:9999"></div>');
+            ctrl.append('<strong>线路</strong><br/>');
+            linesMeta.forEach(function(m){
+                var id = 'chk-' + m.code;
+                var row = $(`<label style="display:block;margin:4px 0"><input type="checkbox" checked data-code="${m.code}" id="${id}" /> ${m.label}</label>`);
+                ctrl.append(row);
             });
-        });
+            var btns = $('<div style="margin-top:6px"><button id="btn-highlight" style="margin-right:6px">高亮</button><button id="btn-reset">重置</button></div>');
+            ctrl.append(btns);
+            $('body').append(ctrl);
 
-        // highlight selected checked lines
-        $('#btn-highlight').on('click', function(){
-            // remove existing highlight
-            $('.subway-line').removeClass('highlight');
-            $('#line-controls input[type=checkbox]:checked').each(function(){
+            // toggle visibility
+            $('#line-controls input[type=checkbox]').on('change', function(){
                 var code = $(this).data('code');
+                var on = $(this).is(':checked');
                 $('.line-' + code).each(function(){
-                    $(this).addClass('highlight');
-                    // bring to front
-                    this.parentNode.appendChild(this);
+                    var $el = $(this);
+                    if(on){
+                        $el.removeClass('dim');
+                    }else{
+                        $el.addClass('dim');
+                    }
                 });
             });
-        });
-        $('#btn-reset').on('click', function(){
-            $('.subway-line').removeClass('highlight dim');
-            $('#line-controls input[type=checkbox]').prop('checked', true);
-        });
-    }catch(e){console.warn(e)}
+
+            // highlight selected checked lines
+            $('#btn-highlight').on('click', function(){
+                // remove existing highlight
+                $('.subway-line').removeClass('highlight');
+                $('#line-controls input[type=checkbox]:checked').each(function(){
+                    var code = $(this).data('code');
+                    $('.line-' + code).each(function(){
+                        $(this).addClass('highlight');
+                        // bring to front
+                        this.parentNode.appendChild(this);
+                    });
+                });
+            });
+            $('#btn-reset').on('click', function(){
+                $('.subway-line').removeClass('highlight dim');
+                $('#line-controls input[type=checkbox]').prop('checked', true);
+            });
+        }catch(e){console.warn(e)}
+    }
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.error('Failed to load beijing.xml:', textStatus, errorThrown);
+        alert('无法加载地图数据: ' + textStatus);
+    }
+    });
+}
+
+// 在 jQuery 完全加载后初始化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(initPainter, 100);
+    });
+} else {
+    setTimeout(initPainter, 100);
+}
+
+// 其余的事件处理代码
 /* Station interactivity removed: click/hover handlers and stations AJAX omitted */
 
 $(".line-type").on("click", "li:not(.active)", function() {
