@@ -1,0 +1,16 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Idea
+.idea/
+
+# Visual Studio
+*.vcxproj*
