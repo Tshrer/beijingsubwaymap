@@ -35,7 +35,7 @@ function initPainter() {
     }
     
     // 构建 XML 文件路径 - 支持相对路径和 GitHub Pages
-    var xmlPath = 'beijingsubwaymap/subwaymap/beijing.xml';
+    var xmlPath = 'subwaymap/beijing.xml';
     console.log('Loading XML from:', xmlPath);
     
     $.ajax({
@@ -274,12 +274,12 @@ function initPainter() {
         console.error('Status code:', jqXHR.status);
         console.error('Error type:', textStatus);
         console.error('Error thrown:', errorThrown);
-        console.error('URL attempted:', 'beijingsubwaymap/subwaymap/beijing.xml');
+        console.error('URL attempted:', 'subwaymap/beijing.xml');
         console.error('Current location:', window.location.href);
         
         if (jqXHR.status === 404) {
             console.error('The file was not found on the server');
-            alert('错误：无法找到地图数据文件\n\n请确保：\n1. beijingsubwaymap/subwaymap/beijing.xml 文件存在\n2. 文件已上传到 GitHub');
+            alert('错误：无法找到地图数据文件\n\n请确保：\n1. subwaymap/beijing.xml 文件存在\n2. 文件已上传到 GitHub');
         } else if (jqXHR.status === 0) {
             console.error('Network error - check CORS settings');
             alert('网络错误：无法访问地图数据\n请检查网络连接和跨域设置');
@@ -455,7 +455,7 @@ function linePinter(firstPlan) {
             x: startPoint[0].nodeName == "circle" ? startPoint.attr("cx") - 10 : (startPoint.attr("x") - 3),
             y: startPoint[0].nodeName == "circle" ? startPoint.attr("cy") - 28 : (startPoint.attr("y") - 21),
         }).addSvgClass("mark");
-        startImg[0].href.baseVal = `beijingsubwaymap/subwaymap/start.png`;
+        startImg[0].href.baseVal = `subwaymap/start.png`;
         var endImg = $.svg('image').appendTo('#g-box');
         var endPoint = $("[sdata='" + BJ.endName + "']")
         endImg.attr({
@@ -464,7 +464,7 @@ function linePinter(firstPlan) {
             x: endPoint[0].nodeName == "circle" ? endPoint.attr("cx") - 10 : (endPoint.attr("x") - 3),
             y: endPoint[0].nodeName == "circle" ? endPoint.attr("cy") - 28 : (endPoint.attr("y") - 21),
         }).addSvgClass("mark");
-        endImg[0].href.baseVal = `beijingsubwaymap/subwaymap/end.png`;
+        endImg[0].href.baseVal = `subwaymap/end.png`;
     }
     $(thisLineStr).appendTo(".line-info div")
 }
