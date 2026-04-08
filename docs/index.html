@@ -49,6 +49,7 @@
           </label>
         </div>
         <div style="padding: 10px; background: white; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
+          <p>通车时间查询</p>
           <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
             <select id="hour-select" style="padding:6px; width:72px; box-sizing:border-box;">
               <!-- hours populated server-side or by script; provide defaults -->
@@ -56,9 +57,11 @@
             <select id="minute-select" style="padding:6px; width:72px; box-sizing:border-box;">
               <!-- minutes populated by script -->
             </select>
-            <button id="btn-time-search" style="padding:6px 8px;">查询有车</button>
-            <button id="btn-time-clear" style="padding:6px 8px;">清除筛选</button>
-            <button id="btn-time-play" style="padding:6px 8px;" data-playing="false">播放</button>
+          </div>
+          <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+            <button id="btn-time-search" style="padding:6px 8px;">查询</button>
+            <button id="btn-time-clear" style="padding:6px 8px;">清除</button>
+            <button id="btn-time-play" style="padding:6px 8px;" data-playing="false">自动</button>
           </div>
         </div>
       </details>
