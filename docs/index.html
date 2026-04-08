@@ -9,46 +9,81 @@
   <!-- <link rel="stylesheet" href="css/style.css"> -->
 </head>
 <body>
+  <div id="control-panel">
+    <div class="control-section">
+      <div class="search-section" style="padding:8px 10px;">
+        <label style="display:block; font-size:14px; margin-bottom:6px;">搜索站点</label>
+        <div class="search-row">
+          <input id="search-input" type="text" placeholder="输入站名，按回车或选择" />
+          <button id="search-btn">✓</button>
+        </div>
+        <ul id="search-suggestions" style="list-style:none; padding:6px 6px 0 6px; margin:0; display:none;"></ul>
+      </div>
+      <details open>
+        <summary><h3>线路显示控制</h3></summary>
+        <div id="line-controls-menu">
+          <div class="line-controls-header">
+            <button id="toggle-all-lines">全不选</button>
+          </div>
+          <ul id="line-list">
+            <!-- 线路列表将由JS动态生成 -->
+          </ul>
+          <div class="line-controls-footer">
+              <button id="btn-highlight-mode">高亮模式：取消高亮</button>
+          </div>
+        </div>
+      </details>
+    </div>
+    <!-- 其他控制功能可以后续添加 -->
+    <div class="control-section">
+      <details>
+        <summary><h3>更多功能</h3></summary>
+        <div style="padding: 10px; background: white; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
+          <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" id="toggle-line-spacings" style="margin-right: 8px;"> 显示线路站间距信息
+          </label>
+        </div>
+        <div style="padding: 10px; background: white; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
+          <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px; margin-top:8px;">
+            <input type="checkbox" id="toggle-firstlast" style="margin-right: 8px;"> 显示首末班车信息（悬停显示）
+          </label>
+        </div>
+        <div style="padding: 10px; background: white; border: 1px solid #ccc; border-radius: 4px; margin-top: 5px;">
+          <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
+            <select id="hour-select" style="padding:6px; width:72px; box-sizing:border-box;">
+              <!-- hours populated server-side or by script; provide defaults -->
+            </select>
+            <select id="minute-select" style="padding:6px; width:72px; box-sizing:border-box;">
+              <!-- minutes populated by script -->
+            </select>
+            <button id="btn-time-search" style="padding:6px 8px;">查询有车</button>
+            <button id="btn-time-clear" style="padding:6px 8px;">清除筛选</button>
+            <button id="btn-time-play" style="padding:6px 8px;" data-playing="false">播放</button>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div id="spacings-panel" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #ccc; z-index: 1000; overflow-y: auto; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; background: #f5f5f5; padding: 10px 15px; position: sticky; top: 0; border-bottom: 1px solid #eee;">
+      <h3 id="spacings-title" style="margin: 0; font-size: 16px; color: #333;">站间距信息</h3>
+      <button id="close-spacings-panel" style="border: none; background: transparent; font-size: 24px; line-height: 1; cursor: pointer; color: #999; padding: 0;">&times;</button>
+    </div>
+    <div id="spacings-content" style="padding: 15px;"></div>
+  </div>
+
   <div id="app">
     <svg id="mobile-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
       <g id="g-box" class="svg-pan-zoom_viewport"></g>
     </svg>
   </div>
-  <!-- 优先使用 CDN jQuery，本地文件作为后备 -->
-  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-  <script>
-    // 如果 CDN 加载失败，尝试本地版本
-    if (typeof jQuery === 'undefined' && typeof $ === 'undefined') {
-      console.warn('CDN jQuery failed, trying local copy');
-      var script = document.createElement('script');
-      script.src = 'libs/jquery.js';
-      script.onerror = function() {
-        console.error('Failed to load jQuery from both CDN and local. The page will not work correctly.');
-        alert('警告：jQuery 加载失败，网页功能受限。请检查网络连接。');
-      };
-      document.head.appendChild(script);
-    } else {
-      console.log('jQuery loaded from CDN');
-    }
-  </script>
+
+  <script src="libs/jquery.js"></script>
   <script src="libs/limitTextNum.js"></script>
-  <!-- Hammer.js - 使用 CDN 以确保版本兼容性 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
-  <!-- 本地 Hammer 作为后备 -->
-  <script>
-    if (typeof Hammer === 'undefined') {
-      console.warn('CDN Hammer.js failed, trying local copy');
-      var hammerScript = document.createElement('script');
-      hammerScript.src = 'libs/hammer.min.js';
-      hammerScript.onerror = function() {
-        console.error('Failed to load Hammer.js');
-      };
-      document.head.appendChild(hammerScript);
-    } else {
-      console.log('Hammer.js loaded from CDN');
-    }
-  </script>
+  <script src="libs/hammer.min.js"></script>
   <script src="libs/svg-pan-zoom.js"></script>
   <script src="painter.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

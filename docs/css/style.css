@@ -1,3 +1,128 @@
 /* html,body,#app{height:100%;width:100%;margin:0;padding:0;background:#f3f3f3} */
 #mobile-svg{display:block;height:100vh;width:100vw}
 #g-box text{font-family: Arial, "Microsoft Yahei", sans-serif; font-size:12px; pointer-events:none}
+/* Spacings timeline styles */
+.spacings-overflow{
+	overflow-x:auto;
+	padding-bottom:8px;
+	border-top:8px solid var(--axis-color, #007bff);
+}
+.spacings-timeline{
+	display:flex;
+	align-items:center;
+	padding:14px 10px;
+	column-gap:12px;
+}
+.station-node{
+	min-width:120px;
+	text-align:center;
+	padding:6px 10px;
+	box-sizing:border-box;
+}
+.station-node .dot{
+	width:14px;
+	height:14px;
+	border-radius:50%;
+	background:var(--axis-color, #007bff);
+	margin:0 auto 8px auto;
+}
+.station-label{
+	font-size:14px;
+	color:#222;
+	font-weight:600;
+}
+.connector{
+	min-width:160px;
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	justify-content:center;
+	padding:0 8px;
+	box-sizing:border-box;
+}
+.connector .bar{
+	width:100%;
+	height:8px;
+	border-radius:4px;
+	background:linear-gradient(to right, var(--axis-color, #007bff) 0%, #e6e6e6 100%);
+}
+.connector .distance{
+	font-size:14px;
+	color:#444;
+	margin-top:8px;
+}
+.spacings-total{
+	padding:10px 0 0 0;
+	font-weight:bold;
+	text-align:right;
+	border-top:1px solid #e0e0e0;
+	margin-top:6px;
+}
+
+/* Improve scrollbar touch target on some platforms */
+.spacings-overflow::-webkit-scrollbar{height:10px}
+.spacings-overflow::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15); border-radius:6px}
+
+/* Search suggestions */
+#search-suggestions{background:#fff; border:1px solid #e6e6e6; border-radius:4px; box-shadow:0 2px 6px rgba(0,0,0,0.06); max-height:260px; overflow:auto}
+.suggestion-item{padding:6px 8px; cursor:pointer}
+.suggestion-item:hover, .suggestion-item.active{background:#f0f8ff}
+
+/* Tooltip for station first/last times */
+.station-tooltip{
+	position: absolute;
+	z-index: 2000;
+	min-width: 180px;
+	max-width: 360px;
+	background: rgba(0,0,0,0.85);
+	color: #fff;
+	padding: 8px 10px;
+	border-radius: 6px;
+	box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+	font-size: 13px;
+	line-height: 1.4;
+	pointer-events: none;
+}
+.station-tooltip .tooltip-title{font-weight:700; margin-bottom:6px}
+.station-tooltip .tooltip-line{font-size:12px; opacity:0.95; margin-bottom:4px}
+.station-tooltip.hidden{display:none}
+
+/* temporary highlight on map */
+.search-highlight{stroke:#f60 !important; stroke-width:3px !important; filter: drop-shadow(0 0 6px rgba(246,134,30,0.6));}
+
+/* page-level ripple for search highlight */
+.search-ripple{
+	position: absolute;
+	width: 80px;
+	height: 80px;
+	margin-left: -40px;
+	margin-top: -40px;
+	border-radius: 50%;
+	pointer-events: none;
+	transform: scale(0.6);
+	opacity: 0;
+	border: 3px solid rgba(246,134,30,0.9);
+}
+.search-ripple-animate{
+	animation: ripple-scale-fade 0.95s ease-out forwards;
+}
+@keyframes ripple-scale-fade{
+	0% { transform: scale(1.6); opacity: 0.95; }
+	60% { transform: scale(0.9); opacity: 0.6; }
+	100% { transform: scale(0.6); opacity: 0; }
+}
+
+/* flash animation for matched station */
+.search-flash{ animation: search-flash-anim 0.28s ease-in-out 0s 6; }
+@keyframes search-flash-anim{
+	0% { opacity: 1; }
+	50% { opacity: 0.15; }
+	100% { opacity: 1; }
+}
+
+/* Center search input and button */
+.search-section{ padding:6px 8px; display:flex; flex-direction:column; align-items:center; }
+.search-row{ display:flex; gap:6px; width:100%; max-width:320px; justify-content:center; }
+#search-input{ flex:1; padding:6px 8px; box-sizing:border-box; border:1px solid #dcdcdc; border-radius:4px; font-size:13px; height:34px; }
+#search-btn{ padding:6px 10px; border-radius:4px; border:1px solid #d0d0d0; background:#fff; cursor:pointer; font-size:13px; height:34px; }
+#search-suggestions{ width:100%; max-width:320px; margin-left:auto; margin-right:auto; box-sizing:border-box; padding-left:6px; padding-right:6px; }

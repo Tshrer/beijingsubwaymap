@@ -14,3 +14,8 @@ logs/
 
 # Visual Studio
 *.vcxproj*
+
+station-spec/1.html
+
+js/painter.js
+*/*.bak

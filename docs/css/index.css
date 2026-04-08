@@ -144,9 +144,114 @@ text.disabled {
 }
 
 /* controls for line visibility/highlight */
-.subway-line { transition: stroke-opacity 0.18s, stroke-width 0.18s; stroke-opacity: 1; }
-.subway-line.dim { stroke-opacity: 0.12; }
-.subway-line.highlight { stroke-width: 12; stroke-opacity: 1; filter: none; }
+#control-panel {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    padding: 15px;
+    z-index: 1000;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
 
-#line-controls { font-size: 13px }
-#line-controls button { padding: 4px 8px; }
+#app {
+    margin-left: 250px;
+    height: 100%;
+}
+
+.control-section {
+    margin-bottom: 20px;
+}
+
+.control-section h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #343a40;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+#line-controls-menu {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.line-controls-header,
+.line-controls-footer {
+    padding: 8px;
+    background: #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.line-controls-header button,
+.line-controls-footer button {
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+#line-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 5px 0;
+}
+
+#line-list li {
+    border-bottom: 1px solid #eee;
+}
+
+.line-label-wrapper {
+    padding: 6px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#line-list li:last-child {
+    border-bottom: none;
+}
+
+#line-list li:hover {
+    background: #f0f0f0;
+}
+
+#line-list input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.line-color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    border: 1px solid #777;
+}
+
+.line-label {
+    flex-grow: 1;
+}
+
+.line-controls-footer {
+    border-top: 1px solid #ddd;
+    justify-content: center;
+}
+
+.line-controls-footer button {
+    width: 100%;
+}
+
+.subway-line { transition: opacity 0.18s, stroke-opacity 0.18s, stroke-width 0.18s; stroke-opacity: 1; opacity: 1; }
+.subway-line.dim { stroke-opacity: 0.12; opacity: 0.12; }
+.subway-line.highlight { stroke-opacity: 1; opacity: 1; filter: none; }
+path.subway-line.highlight, line.subway-line.highlight { stroke-width: 12; }
+
