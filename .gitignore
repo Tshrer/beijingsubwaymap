@@ -15,7 +15,8 @@ logs/
 # Visual Studio
 *.vcxproj*
 
-station-spec/1.html
+# Ignore station-spac folder
+station-spac/
 
-js/painter.js
-*/*.bak
+# Ignore backup files in subwaymap
+subwaymap/*.bak
