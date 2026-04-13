@@ -199,6 +199,30 @@ text.disabled {
     border-radius: 3px;
 }
 
+/* control footer: docs link */
+#control-footer {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #dee2e6;
+}
+
+#open-docs-link {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    color: #343a40;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#open-docs-link:hover {
+    background: #f1f1f1;
+}
+
 #line-list {
     max-height: 400px;
     overflow-y: auto;

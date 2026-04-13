@@ -813,5 +813,60 @@ $(document).ready(function() {
             setSelectedMinutes(0);
         });
 
+        // ---------- 说明文档面板 ----------
+        (function initDocsPanel(){
+            var $panel = $('#docs-panel');
+            var $content = $('#docs-content');
+            if (!$panel.length || !$content.length) return;
+
+            var loaded = false;
+            var loading = false;
+            var cachedText = '';
+
+            function openPanel() {
+                $panel.show();
+            }
+
+            function closePanel() {
+                $panel.hide();
+            }
+
+            $('#close-docs-panel').off('click.docs').on('click.docs', function(){
+                closePanel();
+            });
+
+            $('#open-docs-link').off('click.docs').on('click.docs', function(e){
+                e.preventDefault();
+                openPanel();
+
+                if (loaded) {
+                    $content.text(cachedText || '');
+                    return;
+                }
+                if (loading) return;
+
+                loading = true;
+                $content.text('加载中...');
+
+                // 使用 jQuery ajax 以保持与现有资源加载方式一致
+                $.ajax({
+                    url: '说明',
+                    dataType: 'text',
+                    type: 'GET',
+                    success: function(txt) {
+                        loaded = true;
+                        cachedText = txt || '';
+                        $content.text(cachedText);
+                    },
+                    error: function() {
+                        $content.text('无法加载说明文档（docs/说明）。请确认文件存在，并通过 Web 服务器方式访问页面。');
+                    },
+                    complete: function() {
+                        loading = false;
+                    }
+                });
+            });
+        })();
+
     }
 });
